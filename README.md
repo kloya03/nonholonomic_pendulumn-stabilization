@@ -28,7 +28,7 @@ $$
 
 The lifted model turns the stabilization problem into a constrained quadratic program. At each MPC update, the controller penalizes roll-angle error and control effort, enforces the lifted linear dynamics, bounds reaction-wheel torque, applies the first control move to the nonlinear plant, and repeats.
 
-## Simulation results
+<!-- ## Simulation results
 
 The following stored simulation shows the bounded control torque and convergence of the roll angle $\psi$ toward the upright reference:
 
@@ -36,7 +36,7 @@ The following stored simulation shows the bounded control torque and convergence
 
 The corresponding longitudinal velocity, yaw rate, and roll-rate histories are shown below:
 
-![Longitudinal velocity, yaw rate, and roll-rate response](misc/005_2.png)
+![Longitudinal velocity, yaw rate, and roll-rate response](misc/005_2.png) -->
 
 ### Animation videos
 
@@ -47,9 +47,9 @@ GitHub does not play repository MP4 files inline in every browser. Use these lin
 - [Open BoxMovie1.mp4](misc/BoxMovie1.mp4) — 13.3-second animation.
 - [Open BoxMovie2.mp4](misc/BoxMovie2.mp4) — 12.5-second animation.
 
-Additional stored plots for a second simulation case are available as [control and roll response](misc/01_1.png) and [state response](misc/01_2.png).
+<!-- Additional stored plots for a second simulation case are available as [control and roll response](misc/01_1.png) and [state response](misc/01_2.png). -->
 
-## Repository layout
+<!-- ## Repository layout
 
 | Path | Purpose |
 | --- | --- |
@@ -69,7 +69,7 @@ Additional stored plots for a second simulation case are available as [control a
 | `Results/` | Paper-style predictor and stabilization plots (`.pdf`/`.eps`) plus the scripts used to generate them, stored as `.txt`. |
 | `misc/` | Animation, geometry-drawing, derivation, and exploratory files; not required for Koopman MPC. |
 
-The bundled `monomials.m` and `sprepmat.m` utilities originate from SOSTOOLS and are used to construct the polynomial dictionary.
+The bundled `monomials.m` and `sprepmat.m` utilities originate from SOSTOOLS and are used to construct the polynomial dictionary. -->
 
 ## Requirements
 
@@ -138,37 +138,13 @@ The main parameters are near the top of the script:
 | `ql(4)` | roll-angle lifted-state weight | 10 |
 | `R` | control-effort weight | $10^{-7}$ |
 
-The published experiment used $[u,\dot\theta,\psi,\dot\psi]=[2,0,0.35,0.15]$, a $\pm50$ N·m torque limit, roll weight $q_\psi=10$, and input weight $R=10^{-7}$. Set `x0` accordingly when comparing directly with the paper.
-
-## Paper-to-code correspondence
-
-| Paper component | Implementation |
-| --- | --- |
-| Nonholonomic kinematics and Euler–Lagrange derivation | `codes/roll_CS_ground.mlx` |
-| Reduced nonlinear dynamics, Eq. (5) | `codes/No theta/eom_grnd_roll_CS_red.m` |
-| RK4 discretization and snapshot matrices $X,Y,\Gamma$ | data-collection section of `Koopman_CS_roll*.m` |
-| Quartic dictionary $\Psi$ | `monomials(x,0:4)` in the reduced training scripts |
-| Least-squares controlled Koopman model, Eqs. (21)–(23) | `Mg = (W*V')*pinv(V*V')`, followed by extraction of `Alift`, `Blift`, and `Clift` |
-| Predictor comparison, Fig. 2 | `Koopman_roll_CS_simulation_not*.m` and `Results/prediction*.pdf` |
-| Lifted constrained MPC | `codes/No theta/Sparsed_MPC.m` and its variants |
-| No-disturbance stabilization, Fig. 3 | `Results/no_disturbance*.pdf` |
-| Disturbance test, Fig. 4 | `Results/with_disturbance*.pdf` and `Results/with_disturbance.txt` |
-| Nonlinear MPC comparison | `codes/No theta/NLMPC for paper/NLMPC_CSroll.m` |
+The published experiment used $[u,\dot\theta,\psi,\dot\psi]=[2,0,0.35,0.15]$, a $\pm50$ N·m torque limit, roll weight $q_\psi=10$, and input weight $R=10^{-7}$. Set `x0` accordingly when comparing directly with the paper.|
 
 ## Model parameters and conventions
 
 The paper reports $m=2.5$ kg, $h=0.05$ m, $b=0.15$ m, and damping coefficients $[C_u,C_\theta,C_\psi]=[0.85,0.85,0.9]$. The five-state scripts use these values. Several later reduced-state training scripts instead set `M = 1.25` and `C_w = 0.25`; check and align the constants in the selected training and validation scripts before claiming a strict numerical reproduction.
 
 Angles are in radians, angular rates in rad/s, longitudinal velocity in m/s, time in seconds, and control torque in N·m. In filenames and comments, “No theta” means that the yaw angle $\theta$ is omitted from the learned state because the reduced dynamics are invariant to planar position and yaw. The yaw rate $\dot\theta$ remains a state.
-
-## Reproducibility notes
-
-- Training is randomized and the original scripts do not set a seed. Call `rng(...)` before training for repeatability.
-- Large scripts repeatedly concatenate arrays and perform symbolic substitution for every snapshot; expect high memory use and long run times.
-- The training variants use different data distributions, parameter values, sample counts, and output filenames. A controller should load the model produced by the matching training script.
-- Some scripts are historical experiments and reference model names not generated by the current script beside them, such as `koopman_roll_CS_not_norm.mat`, `koopman_roll_CS_not2.mat`, or `koopman1.mat`.
-- `Results/*.txt` are MATLAB source snapshots despite their extension. They also reference ignored `.mat` models and are best treated as records of the reported runs.
-- `Gpops_roll_stabilize.m` contains an author-specific absolute path and requires a separate GPOPS-II installation.
 
 ## Citation
 
