@@ -2,6 +2,8 @@
 
 MATLAB implementation of data-driven Koopman modeling and model predictive control (MPC) for stabilizing the roll of a modified Chaplygin sleigh. The sleigh is underactuated: an internal reaction wheel applies torque in yaw, and that same torque must propel the vehicle and keep its elevated center of mass upright.
 
+Fish-like robots can achieve efficient, agile underwater motion, but slender body shapes may be unstable in roll. The modified Chaplygin sleigh provides a simple nonholonomic model for studying how internal actuation can generate propulsion while simultaneously stabilizing this roll motion.
+
 This repository accompanies:
 
 > K. Loya and P. Tallapragada, “Stabilization of an Inverted Pendulum on a Nonholonomic System,” *IFAC-PapersOnLine*, vol. 55, no. 37, pp. 764–769, 2022. [doi:10.1016/j.ifacol.2022.11.274](https://doi.org/10.1016/j.ifacol.2022.11.274)
