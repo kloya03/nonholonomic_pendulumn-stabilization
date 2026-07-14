@@ -1,0 +1,98 @@
+clear all;
+clc;
+nx = 4;
+ny = 4;
+nu = 1;
+tic
+f_xu = @eom_grnd_roll_CS_red; % f(x,u) -- non-linear dynamics with 1 input torque
+
+% global b h M C_s g C_w C_p
+% b = 0.15; %m
+% h = 0.05; % m
+% M = 2.5; %kg
+% C_s = 0.85;
+% g =9.8;
+% C_w = 0.85;
+% C_p = 0.9;
+
+%% nlobj
+nlobj = nlmpc(nx,ny,nu);
+Ts = 0.001;
+nlobj.Ts = Ts;
+nlobj.PredictionHorizon = 200;
+nlobj.ControlHorizon = 10;
+
+%% Model
+nlobj.Model.StateFcn = @(x,u)eom_grnd_roll_CS_red(x,u);
+nlobj.Model.IsContinuousTime = true;
+% nlobj.Model.NumberOfParameters = 1;
+
+%% Constraints
+for ct = 1:nx
+    nlobj.states(ct).Min = -100; %% also can include ratemin max
+    nlobj.states(ct).Max = 100;
+end
+nlobj.MV.Min = -75;
+nlobj.MV.Max = 75;
+
+%% Cost function
+nlobj.Optimization.CustomCostFcn = @Nl_costfcn;
+nlobj.Optimization.ReplaceStandardCost = true;
+
+%% initial state and inputs
+x0 = [0.1;0.2;0.3;0.3];
+u0 = zeros(nu,1);
+validateFcns(nlobj,x0,u0);
+
+%% Solve for N-L MPC
+nloptions = nlmpcmoveopt;
+nloptions.Parameters = {Ts};
+optns = optimset('display','iter','MaxIter', 2000, 'MaxFunEvals', 100000);
+optim.options.Fmincon = optns;
+Duration = 2;
+xHistory = x0;
+mv = u0;
+mu = u0;
+x = x0;
+for ct = 1:(Duration/Ts)
+    % Compute optimal control moves
+    [mv,nloptions] = nlmpcmove(nlobj,x,mv,[],[],nloptions);
+    % Implement first optimal control move
+    x = x + Ts*f_xu(x,mv);
+    % save control actions
+    mu = [mu mv];
+    % Save plant states
+    xHistory = [xHistory x];
+end
+% [~,~,info] = nlmpcmove(nlobj,x0,u0);
+et = toc;
+
+
+figure
+subplot(2,2,1)
+plot(0:Ts:Duration,xHistory(1,:))
+xlabel('time')
+ylabel('u')
+title('velocity')
+subplot(2,2,2)
+plot(0:Ts:Duration,xHistory(2,:))
+xlabel('time')
+ylabel('thetadot')
+title('angular velovity')
+subplot(2,2,3)
+plot(0:Ts:Duration,xHistory(3,:))
+xlabel('time')
+ylabel('psi')
+title('roll angle')
+subplot(2,2,4)
+plot(0:Ts:Duration,xHistory(4,:))
+xlabel('time')
+ylabel('psidot')
+title('roll angle velocity')
+
+
+function J = Nl_costfcn(X,U,e,data)
+stability = norm(X(:,3));
+costt = norm(U(:,data.MVIndex(1)));
+J =  stability + 1e-05*costt;%+ 1e-04*E + 1e-04*norm(dW) + 1e-04*dlen;
+end

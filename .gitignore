@@ -13,6 +13,15 @@ bin-release/
 *.ipa
 *.apk
 
+# Video and Data files
+# *.avi
+# *.mp4
+# *.bag
+*.mat
+# *.fig
+# *.csv
+
 # Project files, i.e. `.project`, `.actionScriptProperties` and `.flexProperties`
 # should NOT be excluded as they contain compiler settings and other important
 # information for Eclipse / Flash Builder.
+iros_video_4k.mp4
