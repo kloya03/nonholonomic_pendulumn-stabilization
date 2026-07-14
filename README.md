@@ -28,6 +28,27 @@ $$
 
 The lifted model turns the stabilization problem into a constrained quadratic program. At each MPC update, the controller penalizes roll-angle error and control effort, enforces the lifted linear dynamics, bounds reaction-wheel torque, applies the first control move to the nonlinear plant, and repeats.
 
+## Simulation results
+
+The following stored simulation shows the bounded control torque and convergence of the roll angle $\psi$ toward the upright reference:
+
+![Control torque and stabilized roll response](misc/005_1.png)
+
+The corresponding longitudinal velocity, yaw rate, and roll-rate histories are shown below:
+
+![Longitudinal velocity, yaw rate, and roll-rate response](misc/005_2.png)
+
+### Animation videos
+
+GitHub does not play repository MP4 files inline in every browser. Use these links to open or download the existing 3D Chaplygin-sleigh animations:
+
+- [Open BoxMovie.mp4](misc/BoxMovie.mp4) — 5-second 3D animation.
+- [Open BoxMovie01.mp4](misc/BoxMovie01.mp4) — 12.5-second animation.
+- [Open BoxMovie1.mp4](misc/BoxMovie1.mp4) — 13.3-second animation.
+- [Open BoxMovie2.mp4](misc/BoxMovie2.mp4) — 12.5-second animation.
+
+Additional stored plots for a second simulation case are available as [control and roll response](misc/01_1.png) and [state response](misc/01_2.png).
+
 ## Repository layout
 
 | Path | Purpose |
