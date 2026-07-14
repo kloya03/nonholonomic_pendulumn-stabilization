@@ -71,12 +71,12 @@ From MATLAB:
 ```matlab
 cd('codes/No theta')
 rng(1)  % optional, for repeatable random training data
-run('Koopman_CS_roll_randn-Dell-Kloya.m')
+run('Koopman_CS_roll_randn.m')
 ```
 
-This creates `koopman_roll_CS_not_randn12.mat`, containing the learned predictor and the variables needed by the downstream scripts. The default large run uses 200 trajectories, 1000 time steps per trajectory, a sample time of 0.001 s, torque samples in $[-75,75]$ N·m, and all monomials through degree four. It is computationally and memory intensive.
+<!-- This creates `koopman_roll_CS_not_randn12.mat`, containing the learned predictor and the variables needed by the downstream scripts. The default large run uses 200 trajectories, 1000 time steps per trajectory, a sample time of 0.001 s, torque samples in $[-75,75]$ N·m, and all monomials through degree four. It is computationally and memory intensive.
 
-For a very small pipeline check, `Koopman_CS_roll_randn.m` writes the same filename but currently uses only 2 trajectories of 10 samples. That model is useful for debugging the workflow, not for reproducing the reported control quality.
+For a very small pipeline check, `Koopman_CS_roll_randn.m` writes the same filename but currently uses only 2 trajectories of 10 samples. That model is useful for debugging the workflow, not for reproducing the reported control quality. -->
 
 > **Important:** `*.mat` is ignored by Git. A fresh clone does not contain the trained models even if they are present in a researcher's local working tree; run a training script before predictor or MPC scripts that call `load(...)`.
 
@@ -110,7 +110,7 @@ The main parameters are near the top of the script:
 | --- | --- | --- |
 | `dt` | model sample time, loaded from the trained model | 0.001 s |
 | `tsim` | closed-loop simulation duration | 2 s |
-| `tpred` | prediction horizon duration | 0.01 s |
+| `tpred` | prediction horizon duration | 0.1 s |
 | `tcont` | control/update horizon duration | 0.001 s |
 | `x0` | $[u,\dot\theta,\psi,\dot\psi]^T$ | $[0.2,0,0.1,0.15]^T$ |
 | `maxA` | total torque magnitude limit | 50 N·m |
