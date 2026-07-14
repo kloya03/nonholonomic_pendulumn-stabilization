@@ -40,12 +40,13 @@ The corresponding longitudinal velocity, yaw rate, and roll-rate histories are s
 
 ### Animation videos
 
-GitHub does not play repository MP4 files inline in every browser. Use these links to open or download the existing 3D Chaplygin-sleigh animations:
+The GIF previews play directly on GitHub. Select an animation to open its original, higher-quality MP4 file.
 
-- [Open BoxMovie.mp4](misc/BoxMovie.mp4) — 5-second 3D animation.
-- [Open BoxMovie01.mp4](misc/BoxMovie01.mp4) — 12.5-second animation.
-- [Open BoxMovie1.mp4](misc/BoxMovie1.mp4) — 13.3-second animation.
-- [Open BoxMovie2.mp4](misc/BoxMovie2.mp4) — 12.5-second animation.
+| 3D simulation | 3D simulation, run 01 |
+| --- | --- |
+| [![Animated 3D simulation of the Chaplygin sleigh](misc/BoxMovie.gif)](misc/BoxMovie.mp4) | [![Animated 3D simulation of the Chaplygin sleigh, run 01](misc/BoxMovie01.gif)](misc/BoxMovie01.mp4) |
+<!-- | **3D simulation, run 1** | **3D simulation, run 2** | -->
+<!-- | [![Animated 3D simulation of the Chaplygin sleigh, run 1](misc/BoxMovie1.gif)](misc/BoxMovie1.mp4) | [![Animated 3D simulation of the Chaplygin sleigh, run 2](misc/BoxMovie2.gif)](misc/BoxMovie2.mp4) | -->
 
 <!-- Additional stored plots for a second simulation case are available as [control and roll response](misc/01_1.png) and [state response](misc/01_2.png). -->
 
