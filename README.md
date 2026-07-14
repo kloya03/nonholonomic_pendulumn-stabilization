@@ -8,23 +8,23 @@ This repository accompanies:
 
 ## Method at a glance
 
-The vehicle configuration is \(q=(x_c,y_c,\theta,\psi)\), where \(\theta\) is yaw and \(\psi\) is roll. A knife edge at distance \(b\) from the center imposes the nonholonomic constraint
+The vehicle configuration is $q=(x_c,y_c,\theta,\psi)$, where $\theta$ is yaw and $\psi$ is roll. A knife edge at distance $b$ from the center imposes the nonholonomic constraint
 
-\[
+$$
 v-b\dot{\theta}=0.
-\]
+$$
 
 This reduces the dynamics to the four-state model
 
-\[
+$$
 \xi=[u,\dot{\theta},\psi,\dot{\psi}]^\mathsf{T},
-\]
+$$
 
-where \(u\) is longitudinal speed. The nonlinear continuous-time equations are numerically integrated with a fixed-step fourth-order Runge–Kutta scheme to collect snapshot data. Monomials of the reduced states are then used as observables, and a finite-dimensional controlled Koopman predictor is identified by least squares:
+where $u$ is longitudinal speed. The nonlinear continuous-time equations are numerically integrated with a fixed-step fourth-order Runge–Kutta scheme to collect snapshot data. Monomials of the reduced states are then used as observables, and a finite-dimensional controlled Koopman predictor is identified by least squares:
 
-\[
+$$
 z_{k+1}=A z_k+B\tau_k, \qquad \xi_k\approx C z_k, \qquad z_k=\Psi(\xi_k).
-\]
+$$
 
 The lifted model turns the stabilization problem into a constrained quadratic program. At each MPC update, the controller penalizes roll-angle error and control effort, enforces the lifted linear dynamics, bounds reaction-wheel torque, applies the first control move to the nonlinear plant, and repeats.
 
@@ -32,13 +32,13 @@ The lifted model turns the stabilization problem into a constrained quadratic pr
 
 | Path | Purpose |
 | --- | --- |
-| `codes/No theta/Koopman_CS_roll_randn-Dell-Kloya.m` | Main reduced-state training script: RK4 data generation, quartic monomial lifting, and least-squares identification of \(A\), \(B\), and \(C\). |
+| `codes/No theta/Koopman_CS_roll_randn-Dell-Kloya.m` | Main reduced-state training script: RK4 data generation, quartic monomial lifting, and least-squares identification of $A$, $B$, and $C$. |
 | `codes/No theta/Sparsed_MPC.m` | Reduced-state Koopman MPC using `quadprog`; this is the closest executable implementation of the paper's stabilization experiment. |
 | `codes/No theta/SMPC_test.m` and `Sparsed_MPC_latest.m` | Alternative MPC weights, horizons, initial conditions, and ODE45 checks. |
 | `codes/No theta/Koopman_roll_CS_simulation_not*.m` | Open-loop Koopman predictor validation against the nonlinear model. |
-| `codes/No theta/eom_grnd_roll_CS_red.m` | Four-state nonlinear equations of motion for \([u,\dot\theta,\psi,\dot\psi]\). |
-| `codes/Koopman_roll_CS.m` | Earlier five-state training workflow that retains yaw angle \(\theta\) and uses cubic monomials. |
-| `codes/Koopman_roll_CS_cossine.m` | Five-state variant augmented with \(\cos\psi\) and \(\sin\psi\). |
+| `codes/No theta/eom_grnd_roll_CS_red.m` | Four-state nonlinear equations of motion for $[u,\dot\theta,\psi,\dot\psi]$. |
+| `codes/Koopman_roll_CS.m` | Earlier five-state training workflow that retains yaw angle $\theta$ and uses cubic monomials. |
+| `codes/Koopman_roll_CS_cossine.m` | Five-state variant augmented with $\cos\psi$ and $\sin\psi$. |
 | `codes/Koopman_roll_CS_simulation*.m` | Predictor validation for the five-state models. |
 | `codes/Sparsed_MPC.m` | Earlier five-state Koopman MPC implementation. |
 | `codes/eom_grnd_roll_CS*.m` | Full nonlinear dynamics with direct, sinusoidal, or periodic torque inputs. |
@@ -74,7 +74,7 @@ rng(1)  % optional, for repeatable random training data
 run('Koopman_CS_roll_randn-Dell-Kloya.m')
 ```
 
-This creates `koopman_roll_CS_not_randn12.mat`, containing the learned predictor and the variables needed by the downstream scripts. The default large run uses 200 trajectories, 1000 time steps per trajectory, a sample time of 0.001 s, torque samples in \([-75,75]\) N·m, and all monomials through degree four. It is computationally and memory intensive.
+This creates `koopman_roll_CS_not_randn12.mat`, containing the learned predictor and the variables needed by the downstream scripts. The default large run uses 200 trajectories, 1000 time steps per trajectory, a sample time of 0.001 s, torque samples in $[-75,75]$ N·m, and all monomials through degree four. It is computationally and memory intensive.
 
 For a very small pipeline check, `Koopman_CS_roll_randn.m` writes the same filename but currently uses only 2 trajectories of 10 samples. That model is useful for debugging the workflow, not for reproducing the reported control quality.
 
@@ -89,9 +89,9 @@ run('Koopman_roll_CS_simulation_not.m')
 
 The script compares the lifted linear prediction with the nonlinear RK4/ODE45 response. Its checked-in defaults set both input amplitudes to zero; edit `A1`, `A2`, `W1`, and `W2` near the top to test a periodic input. The paper's corresponding comparison uses
 
-\[
+$$
 \tau(t)=20\sin(30t)+25\cos(20t).
-\]
+$$
 
 The pre-generated paper-style predictor plots are in `Results/prediction_1.pdf`, `Results/prediction_2.pdf`, and `Results/prediction_3.pdf`.
 
@@ -112,12 +112,12 @@ The main parameters are near the top of the script:
 | `tsim` | closed-loop simulation duration | 2 s |
 | `tpred` | prediction horizon duration | 0.01 s |
 | `tcont` | control/update horizon duration | 0.001 s |
-| `x0` | \([u,\dot\theta,\psi,\dot\psi]^T\) | \([0.2,0,0.1,0.15]^T\) |
+| `x0` | $[u,\dot\theta,\psi,\dot\psi]^T$ | $[0.2,0,0.1,0.15]^T$ |
 | `maxA` | total torque magnitude limit | 50 N·m |
 | `ql(4)` | roll-angle lifted-state weight | 10 |
-| `R` | control-effort weight | \(10^{-7}\) |
+| `R` | control-effort weight | $10^{-7}$ |
 
-The published experiment used \([u,\dot\theta,\psi,\dot\psi]=[2,0,0.35,0.15]\), a \(\pm50\) N·m torque limit, roll weight \(q_\psi=10\), and input weight \(R=10^{-7}\). Set `x0` accordingly when comparing directly with the paper.
+The published experiment used $[u,\dot\theta,\psi,\dot\psi]=[2,0,0.35,0.15]$, a $\pm50$ N·m torque limit, roll weight $q_\psi=10$, and input weight $R=10^{-7}$. Set `x0` accordingly when comparing directly with the paper.
 
 ## Paper-to-code correspondence
 
@@ -125,8 +125,8 @@ The published experiment used \([u,\dot\theta,\psi,\dot\psi]=[2,0,0.35,0.15]\), 
 | --- | --- |
 | Nonholonomic kinematics and Euler–Lagrange derivation | `codes/roll_CS_ground.mlx` |
 | Reduced nonlinear dynamics, Eq. (5) | `codes/No theta/eom_grnd_roll_CS_red.m` |
-| RK4 discretization and snapshot matrices \(X,Y,\Gamma\) | data-collection section of `Koopman_CS_roll*.m` |
-| Quartic dictionary \(\Psi\) | `monomials(x,0:4)` in the reduced training scripts |
+| RK4 discretization and snapshot matrices $X,Y,\Gamma$ | data-collection section of `Koopman_CS_roll*.m` |
+| Quartic dictionary $\Psi$ | `monomials(x,0:4)` in the reduced training scripts |
 | Least-squares controlled Koopman model, Eqs. (21)–(23) | `Mg = (W*V')*pinv(V*V')`, followed by extraction of `Alift`, `Blift`, and `Clift` |
 | Predictor comparison, Fig. 2 | `Koopman_roll_CS_simulation_not*.m` and `Results/prediction*.pdf` |
 | Lifted constrained MPC | `codes/No theta/Sparsed_MPC.m` and its variants |
@@ -136,9 +136,9 @@ The published experiment used \([u,\dot\theta,\psi,\dot\psi]=[2,0,0.35,0.15]\), 
 
 ## Model parameters and conventions
 
-The paper reports \(m=2.5\) kg, \(h=0.05\) m, \(b=0.15\) m, and damping coefficients \([C_u,C_\theta,C_\psi]=[0.85,0.85,0.9]\). The five-state scripts use these values. Several later reduced-state training scripts instead set `M = 1.25` and `C_w = 0.25`; check and align the constants in the selected training and validation scripts before claiming a strict numerical reproduction.
+The paper reports $m=2.5$ kg, $h=0.05$ m, $b=0.15$ m, and damping coefficients $[C_u,C_\theta,C_\psi]=[0.85,0.85,0.9]$. The five-state scripts use these values. Several later reduced-state training scripts instead set `M = 1.25` and `C_w = 0.25`; check and align the constants in the selected training and validation scripts before claiming a strict numerical reproduction.
 
-Angles are in radians, angular rates in rad/s, longitudinal velocity in m/s, time in seconds, and control torque in N·m. In filenames and comments, “No theta” means that the yaw angle \(\theta\) is omitted from the learned state because the reduced dynamics are invariant to planar position and yaw. The yaw rate \(\dot\theta\) remains a state.
+Angles are in radians, angular rates in rad/s, longitudinal velocity in m/s, time in seconds, and control torque in N·m. In filenames and comments, “No theta” means that the yaw angle $\theta$ is omitted from the learned state because the reduced dynamics are invariant to planar position and yaw. The yaw rate $\dot\theta$ remains a state.
 
 ## Reproducibility notes
 
